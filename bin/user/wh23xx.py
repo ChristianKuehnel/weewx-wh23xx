@@ -973,7 +973,7 @@ if __name__ == '__main__':
                        'mode', 'model', 'timezone', 'version']
 
     def print_info(x, display_keys=None):
-        keys = x.keys() if not display_keys else list(set(x.keys()) & set(display_keys))
+        keys = list(x.keys()) if not display_keys else list(set(x.keys()) & set(display_keys))
         keys.sort()
         for k in keys:
             print("%s: %s" % (k, x[k]))
