@@ -645,7 +645,7 @@ class WH23xxStation(object):
     def _read_eeprom(self, addr, size):
         # initiate a read by sending the READ_EEPROM command.
         addr_lo = addr & 0xff
-        addr_hi = (addr / 256) & 0xff
+        addr_hi = (addr // 256) & 0xff
         cmd = [WH23xxStation.READ_EEPROM, addr_lo, addr_hi, size]
         chksum = _calc_checksum(cmd)
         buf = [0x02, 0x05]
@@ -874,13 +874,13 @@ class WH23xxStation(object):
             return data
         x = ((raw[0] & 0x01) << 8) + raw[1]
         data['wind_dir'] = None if x == 0x1ff else x # compass degree
-        x = (((raw[0] & 0x02) / 0x02) << 8) + raw[2]
+        x = (((raw[0] & 0x02) // 0x02) << 8) + raw[2]
         data['wind_speed'] = None if x == 0x1ff else x / 10.0 # m/s
-        x = (((raw[0] & 0x04) / 0x04) << 8) + raw[3]
+        x = (((raw[0] & 0x04) // 0x04) << 8) + raw[3]
         data['gust_speed'] = None if x == 0x1ff else x / 10.0 # m/s
-        data['rain_total'] = ((((raw[0] & 0x08) / 0x08) << 16) + (raw[5] << 8) + raw[4]) * 0.1 # 0.0-9999.9 mm
-        data['rain_overflow'] = (raw[0] & 0x10) / 0x10 # bit 4
-        data['no_sensors'] = (raw[0] & 0x80) / 0x80 # bit 7
+        data['rain_total'] = ((((raw[0] & 0x08) // 0x08) << 16) + (raw[5] << 8) + raw[4]) * 0.1 # 0.0-9999.9 mm
+        data['rain_overflow'] = (raw[0] & 0x10) // 0x10 # bit 4
+        data['no_sensors'] = (raw[0] & 0x80) // 0x80 # bit 7
         data['humidity_in'] = None if raw[6] == 0xff else raw[6]
         data['humidity_out'] = None if raw[7] == 0xff else raw[7]
         x = ((raw[9] & 0x0f) << 8) + raw[8]
