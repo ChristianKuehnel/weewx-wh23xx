@@ -248,7 +248,6 @@ Command Result
 
 from __future__ import with_statement, print_function
 
-import syslog
 import time
 import usb
 
@@ -265,18 +264,38 @@ def loader(config_dict, _):
 def confeditor_loader():
     return WH23xxConfigurationEditor()
 
+# reusing logging setup from
+# https://github.com/matthewwall/weewx-mqtt/blob/master/bin/user/mqtt.py
+try:
+    # weewx4 logging
+    import weeutil.logger
+    import logging
 
-def logmsg(level, msg):
-    syslog.syslog(level, 'wh23xx: %s' % msg)
+    log = logging.getLogger(__name__)
 
-def logdbg(msg):
-    logmsg(syslog.LOG_DEBUG, msg)
+    def logdbg(msg):
+        log.debug(msg)
 
-def loginf(msg):
-    logmsg(syslog.LOG_INFO, msg)
+    def loginf(msg):
+        log.info(msg)
 
-def logerr(msg):
-    logmsg(syslog.LOG_ERR, msg)
+    def logerr(msg):
+        log.error(msg)
+except ImportError:
+    # old-style weewx logging
+    import syslog
+
+    def logmsg(level, msg):
+        syslog.syslog(level, 'wh23xx: %s' % msg)
+
+    def logdbg(msg):
+        logmsg(syslog.LOG_DEBUG, msg)
+
+    def loginf(msg):
+        logmsg(syslog.LOG_INFO, msg)
+
+    def logerr(msg):
+        logmsg(syslog.LOG_ERR, msg)
 
 
 LUMINOSITY_TO_RADIATION = 0.0079
